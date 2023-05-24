@@ -66,6 +66,21 @@ namespace Stocks.WebAPI.Controllers
                 return Problem(errorMessage);
             }
         }
+
+        [HttpGet("email-available")]
+        public async Task<IActionResult> IsEmailAvailable(string email)
+        {
+            ApplicationUser? user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return Ok(true);
+            }
+            else
+            {
+                return Ok(false);
+            }
+        }
     }
 }
 
