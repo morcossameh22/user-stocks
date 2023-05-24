@@ -1,0 +1,71 @@
+﻿using System;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stocks.Core.DTO;
+using Stocks.Core.Identity;
+using Stocks.Core.ServiceContracts;
+
+namespace Stocks.WebAPI.Controllers
+{
+    [AllowAnonymous]
+    public class AccountController : ControllerBase
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IJwtService _jwtService;
+
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IJwtService jwtService)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+            _jwtService = jwtService;
+        }
+
+        [HttpPost("register")]
+        public async Task<ActionResult<ApplicationUser>> PostRegister(RegisterDTO registerDTO)
+        {
+            //Validation
+            if (ModelState.IsValid == false)
+            {
+                string errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return Problem(errorMessage);
+            }
+
+
+            //Create user
+            ApplicationUser user = new ApplicationUser()
+            {
+                Email = registerDTO.Email,
+                PhoneNumber = registerDTO.PhoneNumber,
+                UserName = registerDTO.Email,
+                PersonName = registerDTO.PersonName
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
+
+            if (result.Succeeded)
+            {
+                //sign-in
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                var authenticationResponse = _jwtService.CreateJwtToken(user);
+                user.RefreshToken = authenticationResponse.RefreshToken;
+
+                user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
+                await _userManager.UpdateAsync(user);
+
+
+                return Ok(authenticationResponse);
+            }
+            else
+            {
+                string errorMessage = string.Join(" | ", result.Errors.Select(e => e.Description)); //error1 | error2
+                return Problem(errorMessage);
+            }
+        }
+    }
+}
+

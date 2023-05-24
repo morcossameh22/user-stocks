@@ -8,11 +8,19 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Identity\" />
+    <None Remove="DTO\" />
+    <None Remove="ServiceContracts\" />
+    <None Remove="Services\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\" />
+    <Folder Include="DTO\" />
+    <Folder Include="ServiceContracts\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>
