@@ -81,6 +81,48 @@ namespace Stocks.WebAPI.Controllers
                 return Ok(false);
             }
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> PostLogin(LoginDTO loginDTO)
+        {
+            //Validation
+            if (ModelState.IsValid == false)
+            {
+                string errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return Problem(errorMessage);
+            }
+
+
+            var result = await _signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, isPersistent: false, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                ApplicationUser? user = await _userManager.FindByEmailAsync(loginDTO.Email);
+
+                if (user == null)
+                {
+                    return NoContent();
+                }
+
+                //sign-in
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                var authenticationResponse = _jwtService.CreateJwtToken(user);
+
+                user.RefreshToken = authenticationResponse.RefreshToken;
+
+                user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
+                await _userManager.UpdateAsync(user);
+
+
+                return Ok(authenticationResponse);
+            }
+
+            else
+            {
+                return Problem("Invalid email or password");
+            }
+        }
     }
 }
 
