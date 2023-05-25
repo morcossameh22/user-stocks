@@ -16,11 +16,13 @@
     <None Remove="DTO\" />
     <None Remove="ServiceContracts\" />
     <None Remove="Services\" />
+    <None Remove="Entities\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\" />
     <Folder Include="DTO\" />
     <Folder Include="ServiceContracts\" />
     <Folder Include="Services\" />
+    <Folder Include="Entities\" />
   </ItemGroup>
 </Project>

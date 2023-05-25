@@ -1,6 +1,7 @@
 ﻿using Stocks.Core.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Stocks.Core.Entities;
 
 namespace Stocks.Infrastructure.DbContext
 {
@@ -13,6 +14,8 @@ namespace Stocks.Infrastructure.DbContext
         public ApplicationDbContext()
         {
         }
+
+        public virtual DbSet<Stock> Stocks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
