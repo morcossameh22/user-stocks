@@ -12,17 +12,21 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Identity\" />
-    <None Remove="DTO\" />
-    <None Remove="ServiceContracts\" />
-    <None Remove="Services\" />
-    <None Remove="Entities\" />
+    <None Remove="User\" />
+    <None Remove="User\DTO\" />
+    <None Remove="User\Identity\" />
+    <None Remove="User\ServiceContracts\" />
+    <None Remove="User\Services\" />
+    <None Remove="Stock\" />
+    <None Remove="Stock\Entities\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Identity\" />
-    <Folder Include="DTO\" />
-    <Folder Include="ServiceContracts\" />
-    <Folder Include="Services\" />
-    <Folder Include="Entities\" />
+    <Folder Include="User\" />
+    <Folder Include="User\DTO\" />
+    <Folder Include="User\Identity\" />
+    <Folder Include="User\ServiceContracts\" />
+    <Folder Include="User\Services\" />
+    <Folder Include="Stock\" />
+    <Folder Include="Stock\Entities\" />
   </ItemGroup>
 </Project>
