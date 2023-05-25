@@ -10,4 +10,3 @@ namespace Stocks.Core.Identity
         public DateTime RefreshTokenExpirationDateTime { get; set; }
     }
 }
-

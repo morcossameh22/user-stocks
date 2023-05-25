@@ -123,6 +123,14 @@ namespace Stocks.WebAPI.Controllers
                 return Problem("Invalid email or password");
             }
         }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> GetLogout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return NoContent();
+        }
     }
 }
 
