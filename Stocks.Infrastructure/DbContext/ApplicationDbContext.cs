@@ -15,7 +15,7 @@ namespace Stocks.Infrastructure.DbContext
         {
         }
 
-        public virtual DbSet<Stock> Stocks { get; set; }
+        public virtual DbSet<StockEntity> Stocks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
