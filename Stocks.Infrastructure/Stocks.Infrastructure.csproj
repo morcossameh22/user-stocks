@@ -16,9 +16,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="DbContext\" />
+    <None Remove="Repositories\" />
+    <None Remove="ExternalServices\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DbContext\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="ExternalServices\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Stocks.Core\Stocks.Core.csproj" />

@@ -1,170 +1,59 @@
-﻿using System;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stocks.Core.DTO;
-using Stocks.Core.Identity;
-using Stocks.Core.ServiceContracts;
+using Stocks.Core.User.ServiceContracts;
 
 namespace Stocks.WebAPI.Controllers
 {
-    [AllowAnonymous]
-    public class AccountController : ControllerBase
+  [AllowAnonymous]
+  public class AccountController : ControllerBase
+  {
+    private readonly IAuthenticationService _authenticationService;
+
+    public AccountController(IAuthenticationService AuthenticationService)
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly IJwtService _jwtService;
-
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IJwtService jwtService)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
-            _jwtService = jwtService;
-        }
-
-        [HttpPost("register")]
-        public async Task<ActionResult<ApplicationUser>> PostRegister(RegisterDTO registerDTO)
-        {
-            //Validation
-            if (ModelState.IsValid == false)
-            {
-                string errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                return Problem(errorMessage);
-            }
-
-
-            //Create user
-            ApplicationUser user = new ApplicationUser()
-            {
-                Email = registerDTO.Email,
-                PhoneNumber = registerDTO.PhoneNumber,
-                UserName = registerDTO.Email,
-                PersonName = registerDTO.PersonName
-            };
-
-            IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
-
-            if (result.Succeeded)
-            {
-                //sign-in
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                var authenticationResponse = _jwtService.CreateJwtToken(user);
-                user.RefreshToken = authenticationResponse.RefreshToken;
-
-                user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
-                await _userManager.UpdateAsync(user);
-
-
-                return Ok(authenticationResponse);
-            }
-            else
-            {
-                string errorMessage = string.Join(" | ", result.Errors.Select(e => e.Description)); //error1 | error2
-                return Problem(errorMessage);
-            }
-        }
-
-        [HttpGet("email-available")]
-        public async Task<IActionResult> IsEmailAvailable(string email)
-        {
-            ApplicationUser? user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
-            {
-                return Ok(true);
-            }
-            else
-            {
-                return Ok(false);
-            }
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> PostLogin(LoginDTO loginDTO)
-        {
-            //Validation
-            if (ModelState.IsValid == false)
-            {
-                string errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                return Problem(errorMessage);
-            }
-
-
-            var result = await _signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, isPersistent: false, lockoutOnFailure: false);
-
-            if (result.Succeeded)
-            {
-                ApplicationUser? user = await _userManager.FindByEmailAsync(loginDTO.Email);
-
-                if (user == null)
-                {
-                    return NoContent();
-                }
-
-                //sign-in
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                var authenticationResponse = _jwtService.CreateJwtToken(user);
-
-                user.RefreshToken = authenticationResponse.RefreshToken;
-
-                user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
-                await _userManager.UpdateAsync(user);
-
-
-                return Ok(authenticationResponse);
-            }
-
-            else
-            {
-                return Problem("Invalid email or password");
-            }
-        }
-
-        [HttpGet("logout")]
-        public async Task<IActionResult> GetLogout()
-        {
-            await _signInManager.SignOutAsync();
-
-            return NoContent();
-        }
-
-        [HttpPost("generate-new-jwt-token")]
-        public async Task<IActionResult> GenerateNewAccessToken(TokenModel tokenModel)
-        {
-            if (tokenModel == null)
-            {
-                return BadRequest("Invalid client request");
-            }
-
-            ClaimsPrincipal? principal = _jwtService.GetPrincipalFromJwtToken(tokenModel.Token);
-            if (principal == null)
-            {
-                return BadRequest("Invalid jwt access token");
-            }
-
-            string? email = principal.FindFirstValue(ClaimTypes.Email);
-
-            ApplicationUser? user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpirationDateTime <= DateTime.Now)
-            {
-                return BadRequest("Invalid refresh token");
-            }
-
-            AuthenticationResponse authenticationResponse = _jwtService.CreateJwtToken(user);
-
-            user.RefreshToken = authenticationResponse.RefreshToken;
-            user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
-
-            await _userManager.UpdateAsync(user);
-
-            return Ok(authenticationResponse);
-        }
+      _authenticationService = AuthenticationService;
     }
+
+    [HttpPost("register")]
+    public async Task<ActionResult<AuthenticationResponse>> PostRegister(RegisterDTO registerDTO)
+    {
+      if (ModelState.IsValid == false)
+      {
+        string errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+        return Problem(errorMessage);
+      }
+
+      AuthenticationResponse response = await _authenticationService.Register(registerDTO);
+
+      return response;
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<AuthenticationResponse>> PostLogin(LoginDTO loginDTO)
+    {
+      if (ModelState.IsValid == false)
+      {
+        string errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+        return Problem(errorMessage);
+      }
+      
+      return await _authenticationService.Login(loginDTO);
+    }
+
+    [HttpDelete("logout")]
+    public async Task<IActionResult> Logout()
+    {
+      await _authenticationService.Logout();
+
+      return NoContent();
+    }
+
+    [HttpPost("generate-new-jwt-token")]
+    public async Task<ActionResult<AuthenticationResponse>> GenerateNewAccessToken(TokenModel tokenModel)
+    {
+      return await _authenticationService.GenerateNewAccessToken(tokenModel);
+    }
+  }
 }
 

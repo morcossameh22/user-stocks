@@ -11,6 +11,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
+using Stocks.Core.User.ServiceContracts;
+using Stocks.Core.User.Services;
+using Stocks.Core.User.Domain.RepositoryContracts;
+using Stocks.Core.Stock.Domain.RepositoryContracts;
+using Stocks.Core.Stock.ServiceContracts;
+using Stocks.Infrastructure.Repositories;
+using Stocks.Infrastructure.ExternalServices;
+using Stocks.Core.Stock.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +37,11 @@ builder.Services.AddHttpClient();
 
 
 builder.Services.AddTransient<IJwtService, JwtService>();
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+builder.Services.AddTransient<IStockService, StockService>();
+builder.Services.AddTransient<IUsersRepository, UsersRepository>();
+builder.Services.AddTransient<IStocksRepository, StocksRepository>();
+builder.Services.AddTransient<IExternalStockService, ExternalStockService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

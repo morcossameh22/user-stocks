@@ -14,25 +14,33 @@
   <ItemGroup>
     <None Remove="User\" />
     <None Remove="User\DTO\" />
-    <None Remove="User\Identity\" />
     <None Remove="User\ServiceContracts\" />
     <None Remove="User\Services\" />
     <None Remove="Stock\" />
-    <None Remove="Stock\Entities\" />
     <None Remove="Stock\DTO\" />
     <None Remove="Stock\Services\" />
     <None Remove="Stock\ServicesContracts\" />
+    <None Remove="User\Domain\" />
+    <None Remove="User\Domain\Identity\" />
+    <None Remove="User\Domain\RepositoryContracts\" />
+    <None Remove="Stock\Domain\" />
+    <None Remove="Stock\Domain\Entities\" />
+    <None Remove="Stock\Domain\RepositoryContracts\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="User\" />
     <Folder Include="User\DTO\" />
-    <Folder Include="User\Identity\" />
     <Folder Include="User\ServiceContracts\" />
     <Folder Include="User\Services\" />
     <Folder Include="Stock\" />
-    <Folder Include="Stock\Entities\" />
     <Folder Include="Stock\DTO\" />
     <Folder Include="Stock\Services\" />
     <Folder Include="Stock\ServiceContracts\" />
+    <Folder Include="User\Domain\" />
+    <Folder Include="User\Domain\Identity\" />
+    <Folder Include="User\Domain\RepositoryContracts\" />
+    <Folder Include="Stock\Domain\" />
+    <Folder Include="Stock\Domain\Entities\" />
+    <Folder Include="Stock\Domain\RepositoryContracts\" />
   </ItemGroup>
 </Project>
