@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Stocks.Core.DTO;
 using Stocks.Core.User.ServiceContracts;
 
@@ -10,9 +11,9 @@ namespace Stocks.WebAPI.Controllers
   {
     private readonly IAuthenticationService _authenticationService;
 
-    public AccountController(IAuthenticationService AuthenticationService)
+    public AccountController(IAuthenticationService authenticationService)
     {
-      _authenticationService = AuthenticationService;
+      _authenticationService = authenticationService;
     }
 
     [HttpPost("register")]
@@ -37,7 +38,7 @@ namespace Stocks.WebAPI.Controllers
         string errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
         return Problem(errorMessage);
       }
-      
+
       return await _authenticationService.Login(loginDTO);
     }
 

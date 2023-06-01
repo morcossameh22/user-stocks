@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
+
 using Microsoft.AspNetCore.Mvc;
+
 using Stocks.Core.Entities;
 using Stocks.Core.Stock.DTO;
 using Stocks.Core.Stock.ServiceContracts;
@@ -49,13 +51,7 @@ namespace Stocks.WebAPI.Controllers
     {
       ClaimsPrincipal user = HttpContext.User;
 
-      string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-
-      if (userId == null)
-      {
-        throw new Exception("Not found");
-      }
-
+      string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("Not found");
       return new ListStocksRequest()
       {
         UserId = userId
@@ -66,13 +62,7 @@ namespace Stocks.WebAPI.Controllers
     {
       ClaimsPrincipal user = HttpContext.User;
 
-      string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-
-      if (userId == null)
-      {
-        throw new Exception("Not found");
-      }
-
+      string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("Not found");
       return new UserStockDTO()
       {
         StockSymbol = stockSymbol,

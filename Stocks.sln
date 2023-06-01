@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stocks.Core", "Stocks.Core\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stocks.Infrastructure", "Stocks.Infrastructure\Stocks.Infrastructure.csproj", "{3760239D-7C96-4051-AD95-5B65334CFFC2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{86175B03-5E47-44FE-913F-E3FAFBE5C122}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{67F82BE8-D8CA-4176-A40F-A29C8C6CDEF0} = {9D139287-1552-42E3-8194-4919BEDA6176}
+		{E8EF25E6-6487-4CB4-850E-D0845E950A5F} = {86175B03-5E47-44FE-913F-E3FAFBE5C122}
+		{3760239D-7C96-4051-AD95-5B65334CFFC2} = {86175B03-5E47-44FE-913F-E3FAFBE5C122}
+		{C0DEA8C1-92B0-4825-A564-E367B3BD2685} = {86175B03-5E47-44FE-913F-E3FAFBE5C122}
 	EndGlobalSection
 EndGlobal
