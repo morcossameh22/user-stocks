@@ -30,7 +30,7 @@ namespace Stocks.Core.Stock.Services
 
       if (applicationUser == null)
       {
-        throw new Exception("Not found");
+        throw new Exception(CoreConstants.NotFoundMessage);
       }
 
       ICollection<StockResponse> stocksResponse = new List<StockResponse>();
@@ -55,7 +55,7 @@ namespace Stocks.Core.Stock.Services
 
       if (applicationUser == null)
       {
-        throw new Exception("Not found");
+        throw new Exception(CoreConstants.NotFoundMessage);
       }
 
       StockEntity stock = new StockEntity()
@@ -83,7 +83,7 @@ namespace Stocks.Core.Stock.Services
 
       if (stock == null)
       {
-        throw new Exception("Not found");
+        throw new Exception(CoreConstants.NotFoundMessage);
       }
 
       await _stocksRepository.removeStock(stock);

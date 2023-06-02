@@ -92,7 +92,7 @@ namespace Stocks.Core.Services
 
       if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
       {
-        throw new SecurityTokenException("Invalid token");
+        throw new SecurityTokenException(CoreConstants.InvalidToken);
       }
 
       return principal;

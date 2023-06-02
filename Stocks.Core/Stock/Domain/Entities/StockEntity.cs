@@ -9,7 +9,7 @@ namespace Stocks.Core.Entities
     [Key]
     public Guid StockID { get; set; } = new Guid();
 
-    [Required(ErrorMessage = "Stock Symbol can't be blank")]
+    [Required(ErrorMessage = CoreConstants.BlankStockSymbol)]
     public string? StockSymbol { get; set; }
 
     public Guid? UserId { get; set; }

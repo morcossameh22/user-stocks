@@ -35,7 +35,7 @@ namespace Stocks.Infrastructure.ExternalServices
         Dictionary<string, object>? responseDictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(response);
 
         if (responseDictionary == null)
-          throw new InvalidOperationException("No response from finnhub server");
+          throw new InvalidOperationException(InfrastructureConstants.FinnhubError);
 
         if (responseDictionary.ContainsKey("error"))
           throw new InvalidOperationException(Convert.ToString(responseDictionary["error"]));

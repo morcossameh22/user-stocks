@@ -58,7 +58,7 @@ namespace Stocks.Core.User.Services
 
         if (user == null)
         {
-          throw new Exception("User not found");
+          throw new Exception(CoreConstants.UserNotFound);
         }
 
         await _signInManager.SignInAsync(user, isPersistent: false);
@@ -67,7 +67,7 @@ namespace Stocks.Core.User.Services
 
       else
       {
-        throw new Exception("Invalid email or password");
+        throw new Exception(CoreConstants.InvalidEmailPass);
       }
     }
 
@@ -80,13 +80,13 @@ namespace Stocks.Core.User.Services
     {
       if (tokenModel == null)
       {
-        throw new Exception("Invalid client request");
+        throw new Exception(CoreConstants.InvalidClientReq);
       }
 
       ClaimsPrincipal? principal = _jwtService.GetPrincipalFromJwtToken(tokenModel.Token);
       if (principal == null)
       {
-        throw new Exception("Invalid jwt access token");
+        throw new Exception(CoreConstants.InvalidAccessToken);
       }
 
       string? email = principal.FindFirstValue(ClaimTypes.Email);
@@ -95,7 +95,7 @@ namespace Stocks.Core.User.Services
 
       if (user == null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpirationDateTime <= DateTime.Now)
       {
-        throw new Exception("Invalid refresh token");
+        throw new Exception(CoreConstants.InvalidRefreshToken);
       }
 
       return await GenerateToken(user);

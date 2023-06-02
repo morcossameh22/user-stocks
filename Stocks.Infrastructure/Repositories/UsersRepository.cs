@@ -25,7 +25,7 @@ namespace Stocks.Infrastructure.Repositories
 
       if (user == null)
       {
-        throw new Exception("User not found");
+        throw new Exception(InfrastructureConstants.UserNotFound);
       }
 
       return user;
@@ -40,7 +40,7 @@ namespace Stocks.Infrastructure.Repositories
 
       if (user == null)
       {
-        throw new Exception("User not found");
+        throw new Exception(InfrastructureConstants.UserNotFound);
       }
 
       return user;

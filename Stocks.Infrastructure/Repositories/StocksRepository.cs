@@ -21,7 +21,7 @@ namespace Stocks.Infrastructure.Repositories
 
       if (result == 0)
       {
-        throw new Exception("Remove Stock failed");
+        throw new Exception(InfrastructureConstants.RemoveStockFailed);
       }
     }
   }

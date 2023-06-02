@@ -4,12 +4,12 @@ namespace Stocks.Core.DTO
 {
   public class LoginDTO
   {
-    [Required(ErrorMessage = "Email can't be blank")]
-    [EmailAddress(ErrorMessage = "Email should be in a proper email address format")]
+    [Required(ErrorMessage = CoreConstants.BlankEmail)]
+    [EmailAddress(ErrorMessage = CoreConstants.EmailFormat)]
     public string Email { get; set; } = string.Empty;
 
 
-    [Required(ErrorMessage = "Password can't be blank")]
+    [Required(ErrorMessage = CoreConstants.BlankPassword)]
     public string Password { get; set; } = string.Empty;
   }
 }

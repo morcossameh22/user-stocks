@@ -4,7 +4,7 @@ namespace Stocks.Core.Stock.DTO
 {
   public class UserStockDTO
   {
-    [Required(ErrorMessage = "Stock Symbol can't be blank")]
+    [Required(ErrorMessage = CoreConstants.BlankStockSymbol)]
     public string StockSymbol { get; set; } = string.Empty;
 
     public string UserId { get; set; } = string.Empty;

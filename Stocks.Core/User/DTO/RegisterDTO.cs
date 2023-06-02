@@ -5,27 +5,26 @@ namespace Stocks.Core.DTO
 {
   public class RegisterDTO
   {
-    [Required(ErrorMessage = "Person Name can't be blank")]
+    [Required(ErrorMessage = CoreConstants.BlankPersonName)]
     public string PersonName { get; set; } = string.Empty;
 
 
-    [Required(ErrorMessage = "Email can't be blank")]
-    [EmailAddress(ErrorMessage = "Email should be in a proper email address format")]
+    [Required(ErrorMessage = CoreConstants.BlankEmail)]
+    [EmailAddress(ErrorMessage = CoreConstants.EmailFormat)]
     public string Email { get; set; } = string.Empty;
 
 
-    [Required(ErrorMessage = "Phone number can't be blank")]
-    [RegularExpression("^[0-9]*$", ErrorMessage = "Phone number should contain digits only")]
-    [Remote(action: "IsEmailAlreadyRegister", controller: "Account", ErrorMessage = "Email is already is use")]
+    [Required(ErrorMessage = CoreConstants.BlankPhoneNumber)]
+    [RegularExpression("^[0-9]*$", ErrorMessage = CoreConstants.PhoneNumberFormat)]
     public string PhoneNumber { get; set; } = string.Empty;
 
 
-    [Required(ErrorMessage = "Password can't be blank")]
+    [Required(ErrorMessage = CoreConstants.BlankPassword)]
     public string Password { get; set; } = string.Empty;
 
 
-    [Required(ErrorMessage = "Confirm Password can't be blank")]
-    [Compare("Password", ErrorMessage = "Password and confirm password do not match")]
+    [Required(ErrorMessage = CoreConstants.BlankConfirmPassword)]
+    [Compare("Password", ErrorMessage = CoreConstants.PasswordsMatch)]
     public string ConfirmPassword { get; set; } = string.Empty;
   }
 }
