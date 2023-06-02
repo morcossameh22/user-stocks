@@ -1,13 +1,13 @@
 ﻿using System;
 namespace Stocks.Core
 {
-	public static class CoreConstants
-	{
+    public static class CoreConstants
+    {
         // Stock Constants
-		public const string BlankStockSymbol = "Stock Symbol can't be blank";
+        public const string BlankStockSymbol = "Stock Symbol can't be blank";
 
         // User Constants
-		public const string BlankEmail = "Email can't be blank";
+        public const string BlankEmail = "Email can't be blank";
         public const string EmailFormat = "Email should be in a proper email address format";
 
         public const string BlankPersonName = "Person Name can't be blank";

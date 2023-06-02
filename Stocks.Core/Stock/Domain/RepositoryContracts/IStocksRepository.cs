@@ -2,9 +2,9 @@
 
 namespace Stocks.Core.Stock.Domain.RepositoryContracts
 {
-  public interface IStocksRepository
-  {
-    Task removeStock(StockEntity stockEntity);
-  }
+    public interface IStocksRepository
+    {
+        Task RemoveStock(StockEntity stockEntity);
+    }
 }
 

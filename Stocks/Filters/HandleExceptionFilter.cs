@@ -1,16 +1,14 @@
-﻿using System;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Stocks.WebAPI.Filters
 {
-  public class HandleExceptionFilter : IExceptionFilter
-  {
-    public void OnException(ExceptionContext context)
+    public class HandleExceptionFilter : IExceptionFilter
     {
-      context.Result = new ContentResult() { Content = context.Exception.Message, StatusCode = 500 };
+        public void OnException(ExceptionContext context)
+        {
+            context.Result = new ContentResult() { Content = context.Exception.Message, StatusCode = 500 };
+        }
     }
-  }
 }
 

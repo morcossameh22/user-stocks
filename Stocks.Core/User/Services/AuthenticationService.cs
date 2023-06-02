@@ -1,6 +1,9 @@
 ﻿using System.Security.Claims;
+
 using AutoMapper;
+
 using Microsoft.AspNetCore.Identity;
+
 using Stocks.Core.DTO;
 using Stocks.Core.Identity;
 using Stocks.Core.ServiceContracts;
@@ -9,107 +12,100 @@ using Stocks.Core.User.ServiceContracts;
 
 namespace Stocks.Core.User.Services
 {
-  public class AuthenticationService : IAuthenticationService
-  {
-    private readonly IUsersRepository _userRepository;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IJwtService _jwtService;
-    private readonly IMapper _mapper;
-
-    public AuthenticationService(IUsersRepository usersRepository, SignInManager<ApplicationUser> signInManager, IJwtService jwtService, IMapper mapper)
+    public class AuthenticationService : IAuthenticationService
     {
-      _userRepository = usersRepository;
-      _signInManager = signInManager;
-      _jwtService = jwtService;
-      _mapper = mapper;
-    }
+        private readonly IUsersRepository _userRepository;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IJwtService _jwtService;
+        private readonly IMapper _mapper;
 
-    public async Task<AuthenticationResponse> Register(RegisterDTO registerDTO)
-    {
-      ApplicationUser user = _mapper.Map<ApplicationUser>(registerDTO);
-
-      IdentityResult result = await _userRepository.CreateUser(user, registerDTO.Password);
-
-      if (result.Succeeded)
-      {
-        await _signInManager.SignInAsync(user, isPersistent: false);
-        return await GenerateToken(user);
-      }
-      else
-      {
-        string errorMessage = string.Join(" | ", result.Errors.Select(e => e.Description));
-        throw new Exception(errorMessage);
-      }
-    }
-
-
-    public async Task<AuthenticationResponse> Login(LoginDTO loginDTO)
-    {
-      var result = await _signInManager.PasswordSignInAsync(
-        loginDTO.Email,
-        loginDTO.Password,
-        isPersistent: false,
-        lockoutOnFailure: false
-      );
-
-      if (result.Succeeded)
-      {
-        ApplicationUser? user = await _userRepository.FindByEmail(loginDTO.Email);
-
-        if (user == null)
+        public AuthenticationService(IUsersRepository usersRepository, SignInManager<ApplicationUser> signInManager, IJwtService jwtService, IMapper mapper)
         {
-          throw new Exception(CoreConstants.UserNotFound);
+            _userRepository = usersRepository;
+            _signInManager = signInManager;
+            _jwtService = jwtService;
+            _mapper = mapper;
         }
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
-        return await GenerateToken(user);
-      }
+        public async Task<AuthenticationResponse> Register(RegisterDTO registerDTO)
+        {
+            ApplicationUser user = _mapper.Map<ApplicationUser>(registerDTO);
 
-      else
-      {
-        throw new Exception(CoreConstants.InvalidEmailPass);
-      }
+            IdentityResult result = await _userRepository.CreateUser(user, registerDTO.Password);
+
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return await GenerateToken(user);
+            }
+            else
+            {
+                string errorMessage = string.Join(" | ", result.Errors.Select(e => e.Description));
+                throw new Exception(errorMessage);
+            }
+        }
+
+
+        public async Task<AuthenticationResponse> Login(LoginDTO loginDTO)
+        {
+            var result = await _signInManager.PasswordSignInAsync(
+              loginDTO.Email,
+              loginDTO.Password,
+              isPersistent: false,
+              lockoutOnFailure: false
+            );
+
+            if (result.Succeeded)
+            {
+                ApplicationUser? user = await _userRepository.FindByEmail(loginDTO.Email)
+                      ?? throw new Exception(CoreConstants.UserNotFound);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return await GenerateToken(user);
+            }
+
+            else
+            {
+                throw new Exception(CoreConstants.InvalidEmailPass);
+            }
+        }
+
+        public async Task Logout()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
+        public async Task<AuthenticationResponse> GenerateNewAccessToken(TokenModel tokenModel)
+        {
+            if (tokenModel == null)
+            {
+                throw new Exception(CoreConstants.InvalidClientReq);
+            }
+
+            ClaimsPrincipal? principal = _jwtService.GetPrincipalFromJwtToken(tokenModel.Token)
+                      ?? throw new Exception(CoreConstants.InvalidAccessToken);
+
+            string? email = principal.FindFirstValue(ClaimTypes.Email)
+                  ?? throw new Exception(CoreConstants.NotFoundMessage); ;
+
+            ApplicationUser? user = await _userRepository.FindByEmail(email);
+
+            if (user == null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpirationDateTime <= DateTime.Now)
+            {
+                throw new Exception(CoreConstants.InvalidRefreshToken);
+            }
+
+            return await GenerateToken(user);
+        }
+
+        private async Task<AuthenticationResponse> GenerateToken(ApplicationUser user)
+        {
+            var authenticationResponse = _jwtService.CreateJwtToken(user);
+            user.RefreshToken = authenticationResponse.RefreshToken;
+            user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
+            await _userRepository.UpdateUser(user);
+
+            return authenticationResponse;
+        }
     }
-
-    public async Task Logout()
-    {
-      await _signInManager.SignOutAsync();
-    }
-
-    public async Task<AuthenticationResponse> GenerateNewAccessToken(TokenModel tokenModel)
-    {
-      if (tokenModel == null)
-      {
-        throw new Exception(CoreConstants.InvalidClientReq);
-      }
-
-      ClaimsPrincipal? principal = _jwtService.GetPrincipalFromJwtToken(tokenModel.Token);
-      if (principal == null)
-      {
-        throw new Exception(CoreConstants.InvalidAccessToken);
-      }
-
-      string? email = principal.FindFirstValue(ClaimTypes.Email);
-
-      ApplicationUser? user = await _userRepository.FindByEmail(email);
-
-      if (user == null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpirationDateTime <= DateTime.Now)
-      {
-        throw new Exception(CoreConstants.InvalidRefreshToken);
-      }
-
-      return await GenerateToken(user);
-    }
-
-    private async Task<AuthenticationResponse> GenerateToken(ApplicationUser user)
-    {
-      var authenticationResponse = _jwtService.CreateJwtToken(user);
-      user.RefreshToken = authenticationResponse.RefreshToken;
-      user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
-      await _userRepository.UpdateUser(user);
-
-      return authenticationResponse;
-    }
-  }
 }
 
