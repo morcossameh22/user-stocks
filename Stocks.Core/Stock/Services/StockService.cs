@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Stocks.Core.Entities;
 using Stocks.Core.Identity;
 using Stocks.Core.Stock.Domain.RepositoryContracts;
@@ -13,12 +14,14 @@ namespace Stocks.Core.Stock.Services
     private readonly IUsersRepository _usersRepository;
     private readonly IStocksRepository _stocksRepository;
     private readonly IExternalStockService _externalStockService;
+    private readonly IMapper _mapper;
 
-    public StockService(IUsersRepository usersRepository, IStocksRepository stocksRepository, IExternalStockService externalStockService)
+    public StockService(IUsersRepository usersRepository, IStocksRepository stocksRepository, IExternalStockService externalStockService, IMapper mapper)
     {
       _usersRepository = usersRepository;
       _stocksRepository = stocksRepository;
       _externalStockService = externalStockService;
+      _mapper = mapper;
     }
 
     public async Task<ICollection<StockResponse>> listUserStocks(ListStocksRequest listStocksRequest)
@@ -37,14 +40,8 @@ namespace Stocks.Core.Stock.Services
         Dictionary<string, object>? responseDictionary =
                 await _externalStockService.GetStockPriceQuote(stock.StockSymbol);
 
-        StockResponse stockResponse = new StockResponse()
-        {
-          StockSymbol = stock.StockSymbol,
-          CurrentPrice = Convert.ToDouble(responseDictionary["c"].ToString()),
-          HighestPrice = Convert.ToDouble(responseDictionary["h"].ToString()),
-          LowestPrie = Convert.ToDouble(responseDictionary["l"].ToString()),
-          OpenPrice = Convert.ToDouble(responseDictionary["o"].ToString())
-        };
+        StockResponse stockResponse = _mapper.Map<StockResponse>(stock);
+        _mapper.Map(responseDictionary, stockResponse);
 
         stocksResponse.Add(stockResponse);
       }
@@ -71,11 +68,7 @@ namespace Stocks.Core.Stock.Services
 
       IdentityResult result = await _usersRepository.UpdateUser(applicationUser);
 
-      if (result.Succeeded)
-      {
-        return;
-      }
-      else
+      if (!result.Succeeded)
       {
         string errorMessage = string.Join(" | ", result.Errors.Select(e => e.Description));
         throw new Exception(errorMessage);

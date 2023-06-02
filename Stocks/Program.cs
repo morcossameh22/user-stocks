@@ -19,6 +19,11 @@ using Stocks.Core.Stock.ServiceContracts;
 using Stocks.Infrastructure.Repositories;
 using Stocks.Infrastructure.ExternalServices;
 using Stocks.Core.Stock.Services;
+using Stocks.WebAPI.Filters;
+using Stocks.WebAPI.Mappings;
+using AutoMapper;
+using Stocks.Core.Stock.Mappings;
+using Stocks.Core.User.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,12 +31,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add(new ProducesAttribute("application/json"));
-    options.Filters.Add(new ConsumesAttribute("application/json"));
+  options.Filters.Add<HandleExceptionFilter>();
+  options.Filters.Add(new ProducesAttribute("application/json"));
+  options.Filters.Add(new ConsumesAttribute("application/json"));
 
-    //Authorization policy
-    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
+  //Authorization policy
+  var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+  options.Filters.Add(new AuthorizeFilter(policy));
 });
 builder.Services.AddHttpClient();
 
@@ -43,26 +49,37 @@ builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 builder.Services.AddTransient<IStocksRepository, StocksRepository>();
 builder.Services.AddTransient<IExternalStockService, ExternalStockService>();
 
+var configuration = new MapperConfiguration(cfg =>
+{
+  cfg.AddProfile(typeof(StockDTOMapping));
+  cfg.AddProfile(typeof(ListStocksRequestMapping));
+  cfg.AddProfile(typeof(ApplicationUserMapping));
+  cfg.AddProfile(typeof(StockResponseMapping));
+});
+IMapper mapper = configuration.CreateMapper();
+
+builder.Services.AddSingleton(mapper);
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+  options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    // Add a security definition for bearer token authentication
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey
-    });
+  // Add a security definition for bearer token authentication
+  c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+  {
+    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+    Name = "Authorization",
+    In = ParameterLocation.Header,
+    Type = SecuritySchemeType.ApiKey
+  });
 
-    // Enable bearer token authentication
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+  // Enable bearer token authentication
+  c.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             {
                 new OpenApiSecurityScheme
@@ -78,12 +95,13 @@ builder.Services.AddSwaggerGen(c =>
         });
 });
 
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
-    options.Password.RequiredLength = 5;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireDigit = true;
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+{
+  options.Password.RequiredLength = 5;
+  options.Password.RequireNonAlphanumeric = false;
+  options.Password.RequireUppercase = false;
+  options.Password.RequireLowercase = true;
+  options.Password.RequireDigit = true;
 })
  .AddEntityFrameworkStores<ApplicationDbContext>()
  .AddDefaultTokenProviders()
@@ -91,27 +109,29 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
  .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>()
  ;
 
-
 //JWT
-builder.Services.AddAuthentication(options => {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+builder.Services.AddAuthentication(options =>
+{
+  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
- .AddJwtBearer(options => {
-     options.TokenValidationParameters = new TokenValidationParameters()
-     {
-         ValidateAudience = true,
-         ValidAudience = builder.Configuration["Jwt:Audience"],
-         ValidateIssuer = true,
-         ValidIssuer = builder.Configuration["Jwt:Issuer"],
-         ValidateLifetime = true,
-         ValidateIssuerSigningKey = true,
-         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-     };
+ .AddJwtBearer(options =>
+ {
+   options.TokenValidationParameters = new TokenValidationParameters()
+   {
+     ValidateAudience = true,
+     ValidAudience = builder.Configuration["Jwt:Audience"],
+     ValidateIssuer = true,
+     ValidIssuer = builder.Configuration["Jwt:Issuer"],
+     ValidateLifetime = true,
+     ValidateIssuerSigningKey = true,
+     IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+   };
  });
 
-builder.Services.AddAuthorization(options => {
+builder.Services.AddAuthorization(options =>
+{
 });
 
 var app = builder.Build();
@@ -119,8 +139,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

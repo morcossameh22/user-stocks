@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="User\" />
@@ -26,6 +27,8 @@
     <None Remove="Stock\Domain\" />
     <None Remove="Stock\Domain\Entities\" />
     <None Remove="Stock\Domain\RepositoryContracts\" />
+    <None Remove="User\Mappings\" />
+    <None Remove="Stock\Mappings\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="User\" />
@@ -42,5 +45,7 @@
     <Folder Include="Stock\Domain\" />
     <Folder Include="Stock\Domain\Entities\" />
     <Folder Include="Stock\Domain\RepositoryContracts\" />
+    <Folder Include="User\Mappings\" />
+    <Folder Include="Stock\Mappings\" />
   </ItemGroup>
 </Project>

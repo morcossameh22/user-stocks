@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 
+using AutoMapper;
+
 using Microsoft.AspNetCore.Mvc;
 
 using Stocks.Core.Entities;
@@ -11,16 +13,18 @@ namespace Stocks.WebAPI.Controllers
   public class StockController : ControllerBase
   {
     private readonly IStockService _stockService;
+    private readonly IMapper _mapper;
 
-    public StockController(IStockService stockService)
+    public StockController(IStockService stockService, IMapper mapper)
     {
       _stockService = stockService;
+      _mapper = mapper;
     }
 
     [HttpGet("user-stocks")]
     public async Task<ActionResult<ICollection<StockEntity>>> GetUserStocks()
     {
-      ListStocksRequest listStocksRequest = getListStocksRequest();
+      ListStocksRequest listStocksRequest = _mapper.Map<ListStocksRequest>(HttpContext.User);
 
       ICollection<StockResponse> stocksResponse = await _stockService.listUserStocks(listStocksRequest);
 
@@ -30,7 +34,8 @@ namespace Stocks.WebAPI.Controllers
     [HttpPost("add-user-stock")]
     public async Task<IActionResult> AddUserStock(string stockSymbol)
     {
-      UserStockDTO stockDTO = getStockDTO(stockSymbol);
+      UserStockDTO stockDTO = _mapper.Map<UserStockDTO>(HttpContext.User);
+      _mapper.Map(stockSymbol, stockDTO);
 
       await _stockService.addStockToUser(stockDTO);
 
@@ -40,34 +45,12 @@ namespace Stocks.WebAPI.Controllers
     [HttpDelete("remove-user-stock")]
     public async Task<IActionResult> RemoveUserStock(string stockSymbol)
     {
-      UserStockDTO stockDTO = getStockDTO(stockSymbol);
+      UserStockDTO stockDTO = _mapper.Map<UserStockDTO>(HttpContext.User);
+      _mapper.Map(stockSymbol, stockDTO);
 
       await _stockService.removeStockFromUser(stockDTO);
 
       return Ok("Stock removed successfully");
-    }
-
-    private ListStocksRequest getListStocksRequest()
-    {
-      ClaimsPrincipal user = HttpContext.User;
-
-      string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("Not found");
-      return new ListStocksRequest()
-      {
-        UserId = userId
-      };
-    }
-
-    private UserStockDTO getStockDTO(string stockSymbol)
-    {
-      ClaimsPrincipal user = HttpContext.User;
-
-      string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("Not found");
-      return new UserStockDTO()
-      {
-        StockSymbol = stockSymbol,
-        UserId = userId
-      };
     }
   }
 }

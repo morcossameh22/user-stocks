@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Stocks.Core.DTO;
 using Stocks.Core.Identity;
@@ -13,23 +14,19 @@ namespace Stocks.Core.User.Services
     private readonly IUsersRepository _userRepository;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IJwtService _jwtService;
+    private readonly IMapper _mapper;
 
-    public AuthenticationService(IUsersRepository usersRepository, SignInManager<ApplicationUser> signInManager, IJwtService jwtService)
+    public AuthenticationService(IUsersRepository usersRepository, SignInManager<ApplicationUser> signInManager, IJwtService jwtService, IMapper mapper)
     {
       _userRepository = usersRepository;
       _signInManager = signInManager;
       _jwtService = jwtService;
+      _mapper = mapper;
     }
 
     public async Task<AuthenticationResponse> Register(RegisterDTO registerDTO)
     {
-      ApplicationUser user = new ApplicationUser()
-      {
-        Email = registerDTO.Email,
-        PhoneNumber = registerDTO.PhoneNumber,
-        UserName = registerDTO.Email,
-        PersonName = registerDTO.PersonName
-      };
+      ApplicationUser user = _mapper.Map<ApplicationUser>(registerDTO);
 
       IdentityResult result = await _userRepository.CreateUser(user, registerDTO.Password);
 
@@ -48,7 +45,12 @@ namespace Stocks.Core.User.Services
 
     public async Task<AuthenticationResponse> Login(LoginDTO loginDTO)
     {
-      var result = await _signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, isPersistent: false, lockoutOnFailure: false);
+      var result = await _signInManager.PasswordSignInAsync(
+        loginDTO.Email,
+        loginDTO.Password,
+        isPersistent: false,
+        lockoutOnFailure: false
+      );
 
       if (result.Succeeded)
       {
