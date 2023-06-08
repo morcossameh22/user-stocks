@@ -20,7 +20,7 @@ namespace Stocks.WebAPI.Controllers
         }
 
         [HttpGet("user-stocks")]
-        public async Task<ActionResult<ICollection<StockEntity>>> GetUserStocks()
+        public async Task<ActionResult<ICollection<StockResponse>>> GetUserStocks()
         {
             ListStocksRequest listStocksRequest = _mapper.Map<ListStocksRequest>(HttpContext.User);
 

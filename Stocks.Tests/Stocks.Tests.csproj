@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+      
+    <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="FluentAssertions" Version="6.7.0" />
+    <PackageReference Include="Moq" Version="4.18.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="3.1.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
+    <PackageReference Include="MockQueryable.Moq" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Stocks\Stocks.WebAPI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="WebAPI\" />
+    <None Remove="WebAPI\Controllers\" />
+    <None Remove="WebAPI\Filters\" />
+    <None Remove="WebAPI\Mappings\" />
+    <None Remove="Core\" />
+    <None Remove="Core\Stock\" />
+    <None Remove="Core\Stock\Services\" />
+    <None Remove="Core\User\" />
+    <None Remove="Core\User\Services\" />
+    <None Remove="Infrastructure\" />
+    <None Remove="Infrastructure\ExternalServices\" />
+    <None Remove="Core\Stock\Mappings\" />
+    <None Remove="Core\User\Mappings\" />
+    <None Remove="Infrastructure\Repositories\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WebAPI\" />
+    <Folder Include="WebAPI\Controllers\" />
+    <Folder Include="WebAPI\Filters\" />
+    <Folder Include="WebAPI\Mappings\" />
+    <Folder Include="Core\" />
+    <Folder Include="Core\Stock\" />
+    <Folder Include="Core\Stock\Services\" />
+    <Folder Include="Core\User\" />
+    <Folder Include="Core\User\Services\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\ExternalServices\" />
+    <Folder Include="Core\Stock\Mappings\" />
+    <Folder Include="Core\User\Mappings\" />
+    <Folder Include="Infrastructure\Repositories\" />
+  </ItemGroup>
+</Project>

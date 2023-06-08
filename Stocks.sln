@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stocks.WebAPI", "Stocks\Sto
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9D139287-1552-42E3-8194-4919BEDA6176}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stocks.ControllerTests", "Stocks.ControllerTests\Stocks.ControllerTests.csproj", "{67F82BE8-D8CA-4176-A40F-A29C8C6CDEF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stocks.Tests", "Stocks.Tests\Stocks.Tests.csproj", "{67F82BE8-D8CA-4176-A40F-A29C8C6CDEF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stocks.Core", "Stocks.Core\Stocks.Core.csproj", "{E8EF25E6-6487-4CB4-850E-D0845E950A5F}"
 EndProject
