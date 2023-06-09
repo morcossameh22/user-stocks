@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Stocks.Core.Entities
 {
+    /* This is a class representing a stock entity with properties such as StockID, StockSymbol,
+    UserId, and User. */
     public class StockEntity
     {
         [Key]

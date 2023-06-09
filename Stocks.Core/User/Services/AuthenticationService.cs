@@ -12,6 +12,8 @@ using Stocks.Core.User.ServiceContracts;
 
 namespace Stocks.Core.User.Services
 {
+    /* The AuthenticationService class handles user authentication and token generation using a
+    repository, sign-in manager, JWT service, and mapper. */
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IUsersRepository _userRepository;
@@ -27,6 +29,16 @@ namespace Stocks.Core.User.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// This function registers a new user and generates an authentication token if successful.
+        /// </summary>
+        /// <param name="RegisterDTO">RegisterDTO is a data transfer object (DTO) that contains the
+        /// information needed to register a new user. It typically includes properties such as email,
+        /// password, and any other relevant user information.</param>
+        /// <returns>
+        /// The method is returning a `Task` that will eventually resolve to an `AuthenticationResponse`
+        /// object.
+        /// </returns>
         public async Task<AuthenticationResponse> Register(RegisterDTO registerDTO)
         {
             ApplicationUser user = _mapper.Map<ApplicationUser>(registerDTO);
@@ -45,7 +57,15 @@ namespace Stocks.Core.User.Services
             }
         }
 
-
+        /// <summary>
+        /// This function logs in a user with their email and password, generates a token, and returns
+        /// an authentication response.
+        /// </summary>
+        /// <param name="LoginDTO">A data transfer object (DTO) that contains the user's email and
+        /// password for authentication.</param>
+        /// <returns>
+        /// The method is returning an object of type `Task<AuthenticationResponse>`.
+        /// </returns>
         public async Task<AuthenticationResponse> Login(LoginDTO loginDTO)
         {
             var result = await _signInManager.PasswordSignInAsync(
@@ -69,11 +89,26 @@ namespace Stocks.Core.User.Services
             }
         }
 
+        /// <summary>
+        /// The function logs out the current user by calling the SignOutAsync method of the
+        /// SignInManager.
+        /// </summary>
         public async Task Logout()
         {
             await _signInManager.SignOutAsync();
         }
 
+        /// <summary>
+        /// This function generates a new access token for a user based on their refresh token and
+        /// verifies their identity.
+        /// </summary>
+        /// <param name="TokenModel">TokenModel is a class that contains the access token and refresh
+        /// token sent by the client. It is used to authenticate the user and generate a new access
+        /// token.</param>
+        /// <returns>
+        /// The method `GenerateNewAccessToken` returns a `Task` that resolves to an
+        /// `AuthenticationResponse` object.
+        /// </returns>
         public async Task<AuthenticationResponse> GenerateNewAccessToken(TokenModel tokenModel)
         {
             if (tokenModel == null)
@@ -97,6 +132,15 @@ namespace Stocks.Core.User.Services
             return await GenerateToken(user);
         }
 
+        /// <summary>
+        /// This function generates a JWT token for a given user and updates their refresh token and
+        /// expiration date in the user repository.
+        /// </summary>
+        /// <param name="ApplicationUser">ApplicationUser is a class that represents a user in the
+        /// application. In this context, it is used to generate a JWT token for the user.</param>
+        /// <returns>
+        /// The method is returning an object of type `Task<AuthenticationResponse>`.
+        /// </returns>
         private async Task<AuthenticationResponse> GenerateToken(ApplicationUser user)
         {
             var authenticationResponse = _jwtService.CreateJwtToken(user);

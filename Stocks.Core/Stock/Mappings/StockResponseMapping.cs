@@ -5,6 +5,8 @@ using Stocks.Core.Stock.DTO;
 
 namespace Stocks.Core.Stock.Mappings
 {
+    /* The StockResponseMapping class maps data from a StockEntity object and a dictionary to a
+    StockResponse object. */
     public class StockResponseMapping : Profile
     {
         public StockResponseMapping()

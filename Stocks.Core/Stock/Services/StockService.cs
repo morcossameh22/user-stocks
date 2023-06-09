@@ -11,6 +11,8 @@ using Stocks.Core.User.Domain.RepositoryContracts;
 
 namespace Stocks.Core.Stock.Services
 {
+    /* The StockService class implements methods to list, add, and remove stocks for a user using
+    repositories and an external stock service. */
     public class StockService : IStockService
     {
         private readonly IUsersRepository _usersRepository;
@@ -26,6 +28,16 @@ namespace Stocks.Core.Stock.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// This function lists the stocks owned by a user and retrieves their current price quotes from
+        /// an external stock service.
+        /// </summary>
+        /// <param name="ListStocksRequest">A request object that contains the user ID for which the
+        /// stocks need to be listed.</param>
+        /// <returns>
+        /// The method `ListUserStocks` returns a `Task` that resolves to an `ICollection` of
+        /// `StockResponse` objects.
+        /// </returns>
         public async Task<ICollection<StockResponse>> ListUserStocks(ListStocksRequest listStocksRequest)
         {
             ApplicationUser? applicationUser = await _usersRepository.FindByUserIdWithStoks(listStocksRequest.UserId)
@@ -47,6 +59,13 @@ namespace Stocks.Core.Stock.Services
             return stocksResponse;
         }
 
+        /// <summary>
+        /// This function adds a stock to a user's list of stocks and updates the user's information in
+        /// the repository.
+        /// </summary>
+        /// <param name="UserStockDTO">UserStockDTO is a data transfer object that contains information
+        /// about a user and a stock. It has two properties: UserId (string) and StockSymbol
+        /// (string).</param>
         public async Task AddStockToUser(UserStockDTO userStockDTO)
         {
             ApplicationUser? applicationUser = await _usersRepository.FindByUserIdWithStoks(userStockDTO.UserId)
@@ -69,6 +88,12 @@ namespace Stocks.Core.Stock.Services
             }
         }
 
+        /// <summary>
+        /// This function removes a stock from a user's list of stocks.
+        /// </summary>
+        /// <param name="UserStockDTO">UserStockDTO is a data transfer object that contains information
+        /// about a user's stock. It likely includes properties such as UserId, StockSymbol, and
+        /// possibly other information related to the stock.</param>
         public async Task RemoveStockFromUser(UserStockDTO userStockDTO)
         {
             ApplicationUser? applicationUser = await _usersRepository.FindByUserIdWithStoks(userStockDTO.UserId);

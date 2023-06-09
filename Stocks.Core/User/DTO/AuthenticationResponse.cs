@@ -1,5 +1,7 @@
 ﻿namespace Stocks.Core.DTO
 {
+    /* The class "AuthenticationResponse" contains properties for person name, email, token, expiration
+    date, refresh token, and refresh token expiration date. */
     public class AuthenticationResponse
     {
         public string? PersonName { get; set; } = string.Empty;

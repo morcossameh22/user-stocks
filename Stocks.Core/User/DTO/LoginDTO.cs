@@ -2,6 +2,8 @@
 
 namespace Stocks.Core.DTO
 {
+    /* The LoginDTO class contains properties for email and password, with validation attributes for
+    required fields and email format. */
     public class LoginDTO
     {
         [Required(ErrorMessage = CoreConstants.BlankEmail)]

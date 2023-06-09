@@ -2,6 +2,8 @@
 
 namespace Stocks.Core.DTO
 {
+    /* The RegisterDTO class contains properties for a person's name, email, phone number, password,
+    and confirm password with validation attributes. */
     public class RegisterDTO
     {
         [Required(ErrorMessage = CoreConstants.BlankPersonName)]

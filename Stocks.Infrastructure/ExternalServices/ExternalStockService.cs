@@ -6,6 +6,8 @@ using Stocks.Core.Stock.ServiceContracts;
 
 namespace Stocks.Infrastructure.ExternalServices
 {
+    /* The ExternalStockService class retrieves a stock price quote from the Finnhub API using a
+    provided stock symbol and returns it as a dictionary object. */
     public class ExternalStockService : IExternalStockService
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -17,6 +19,16 @@ namespace Stocks.Infrastructure.ExternalServices
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// This function retrieves a stock price quote from the Finnhub API using a provided stock
+        /// symbol and returns it as a dictionary object.
+        /// </summary>
+        /// <param name="stockSymbol">The stock symbol for which the price quote is being
+        /// requested.</param>
+        /// <returns>
+        /// The method is returning a `Task` that will eventually produce a `Dictionary<string, object>`
+        /// object.
+        /// </returns>
         public async Task<Dictionary<string, object>> GetStockPriceQuote(string? stockSymbol)
         {
             using HttpClient httpClient = _httpClientFactory.CreateClient();

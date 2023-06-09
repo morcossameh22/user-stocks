@@ -5,6 +5,8 @@ using Stocks.Core.Identity;
 
 namespace Stocks.Core.User.Mappings
 {
+    /* The class `ApplicationUserMapping` maps properties from a `RegisterDTO` object to an
+    `ApplicationUser` object. */
     public class ApplicationUserMapping : Profile
     {
         public ApplicationUserMapping()
